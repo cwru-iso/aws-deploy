@@ -1,0 +1,21 @@
+---
+- name: Create BookStack docker container
+  docker_container:
+    name: bookstack
+    image: 'solidnerd/bookstack:{{ bookstack_container_version }}'
+    restart_policy: unless-stopped
+    restart: yes
+    env:
+      APP_KEY: '{{ bookstack_app_key }}'
+      APP_URL: '{{ bookstack_app_url }}'
+      DB_HOST: '{{ bookstack_db_host }}'
+      DB_DATABASE: '{{ bookstack_db_name }}'
+      DB_USERNAME: '{{ bookstack_db_user }}'
+      DB_PASSWORD: '{{ bookstack_db_password }}'
+      TZ: '{{ bookstack_container_timezone }}'
+    ports:
+      - '{{ bookstack_container_host }}:{{ bookstack_container_port }}:80'
+    volumes:
+      - '{{ bookstack_container_uploads_path }}:/var/www/bookstack/public/uploads'
+      - '{{ bookstack_container_storage_path }}:/var/www/bookstack/storage/uploads'
+  tags: bookstack

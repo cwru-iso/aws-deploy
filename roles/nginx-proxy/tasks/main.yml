@@ -1,0 +1,39 @@
+---
+- import_tasks: certs.yml
+  tags: proxy
+
+- import_tasks: sites.yml
+  tags: proxy
+
+- name: Copy nginx configuration
+  template:
+    src: nginx.conf.j2
+    dest: '{{ proxy_container_path }}/nginx.conf'
+    owner: root
+    group: root
+    mode: '0644'
+  tags: proxy
+
+- name: Copy nginx proxy_params
+  template:
+    src: proxy_params.j2
+    dest: '{{ proxy_container_path }}/proxy_params'
+    owner: root
+    group: root
+    mode: '0644'
+  tags: proxy
+
+- name: Create nginx-proxy docker container
+  docker_container:
+    name: nginx-proxy
+    image: nginx:alpine
+    network_mode: host
+    ulimits: nofile:8192:8192
+    restart_policy: unless-stopped
+    restart: yes
+    volumes:
+      - '{{ proxy_container_path }}/nginx.conf:/etc/nginx/nginx.conf'
+      - '{{ proxy_container_path }}/proxy_params:/etc/nginx/proxy_params'
+      - '{{ proxy_container_path }}/sites:/etc/nginx/sites-enabled'
+      - '{{ proxy_container_path }}/certs:/etc/ssl/private'
+  tags: proxy

@@ -1,0 +1,29 @@
+---
+- name: Copy Qualys agent RPM
+  copy:
+    src: '{{ role_name }}/qualys-cloud-agent.rpm'
+    dest: /tmp/qualys-cloud-agent.rpm
+    owner: root
+    group: root
+    mode: '0644'
+  tags: qualys
+    
+- name: Install Qualys agent
+  yum:
+    name: /tmp/qualys-cloud-agent.rpm
+    state: present
+  tags: qualys
+    
+- name: Activate Qualys agent
+  command:
+    argv:
+      - /usr/local/qualys/cloud-agent/bin/qualys-cloud-agent.sh
+      - 'ActivationId={{ qualys_activation_id }}'
+      - 'CustomerId={{ qualys_customer_id }}'
+  tags: qualys
+    
+- name: Cleanup Qualys agent RPM
+  file:
+    path: /tmp/qualys-cloud-agent.rpm
+    state: absent
+  tags: [qualys, cleanup]

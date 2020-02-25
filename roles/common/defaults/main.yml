@@ -1,0 +1,21 @@
+---
+# Authorized SSH keys
+ssh_user: ec2-user
+ssh_pubkeys: []
+
+# yum-cron options
+yumcron_config: /etc/yum/yum-cron.conf
+yumcron_cmd: default
+yumcron_apply: yes
+
+# Extra Amazon Linux packages
+amz_extra_packages:
+  - docker
+  - epel
+
+# Mount extra devices
+additional_mounts: []
+
+# Qualys agent options
+qualys_activation_id: ''
+qualys_customer_id: ''

@@ -1,0 +1,22 @@
+---
+# This will NOT install the packages, but allow them to be installed later
+- name: Enable additional Amazon Linux packages
+  shell: 'amazon-linux-extras enable {{ item | quote }}'
+  with_items: '{{ amz_extra_packages }}'
+  tags: extras
+
+# This is not supported in the yum module
+# https://github.com/ansible/ansible/pull/31450#issuecomment-352889579
+- name: Clean yum cache
+  command:
+    cmd: yum clean all
+    warn: no
+  tags: [extras, cleanup]
+
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    state: latest
+    update_cache: yes
+  when: '"epel" in amz_extra_packages'
+  tags: extras

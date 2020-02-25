@@ -1,0 +1,29 @@
+---
+- name: Install automatic updates package
+  yum:
+    name: yum-cron
+    state: latest
+  tags: updates
+
+- name: Configure automatic updates
+  lineinfile:
+    dest: '{{ yumcron_config }}'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - {regexp: '^update_cmd =.+$', line: 'update_cmd = {{ yumcron_cmd }}' }
+    - {regexp: '^.apply_updates =.+$', line: 'apply_updates = {{ yumcron_apply }}' }
+  tags: updates
+
+- name: Enable automatic update service 
+  systemd:
+    name: yum-cron
+    enabled: yes
+  tags: updates
+
+- name: Ensure automatic update service is updated 
+  systemd:
+    name: yum-cron
+    state: restarted
+    daemon_reload: yes
+  tags: updates

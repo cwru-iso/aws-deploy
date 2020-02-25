@@ -1,0 +1,40 @@
+---
+- name: Install TheHive repository
+  yum:
+    name: '{{ thehive_rpm_release_pkg }}'
+    state: present
+  tags: thehive
+
+- name: Install TheHive dependencies
+  yum:
+    name: java-11-openjdk
+    state: latest
+  tags: thehive
+
+- name: Install TheHive
+  yum:
+    name: thehive
+    state: latest
+    update_cache: yes
+  tags: thehive
+
+- name: Copy TheHive configuration
+  template:
+    src: application.conf.j2
+    dest: '/etc/thehive/application.conf'
+    owner: root
+    group: root
+    mode: '0644'
+  tags: thehive
+
+- name: Enable TheHive service 
+  systemd:
+    name: thehive
+    enabled: yes
+  tags: thehive
+
+- name: Ensure TheHive service is updated 
+  systemd:
+    name: thehive
+    state: restarted
+  tags: thehive

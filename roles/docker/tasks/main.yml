@@ -1,0 +1,30 @@
+---
+- name: Install docker
+  yum:
+    name: docker
+    state: latest
+  tags: docker
+
+- name: Enable and start docker service 
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  tags: docker
+
+- name: Install required Python packages
+  yum:
+    name:
+      - python
+      - python3
+      - python-pip
+      - python3-pip
+    state: latest
+  tags: python
+
+- name: Install required pip packages
+  pip:
+    name: docker
+    state: latest
+    umask: '0022'
+  tags: docker

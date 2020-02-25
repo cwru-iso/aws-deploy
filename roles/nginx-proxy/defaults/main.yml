@@ -1,0 +1,28 @@
+---
+# Container options
+proxy_container_http_port: 80
+proxy_container_https_port: 443
+proxy_container_path: /srv/docker/nginx-proxy
+
+# Proxy options
+proxy_application_port: 8080
+proxy_application_host: 127.0.0.1
+
+## SSL options
+# Type can be 'modern' or 'intermediate'
+ssl_config_type: modern
+
+# DH options
+dhparam_size: 4096
+
+# HSTS
+ssl_hsts_enabled: no
+ssl_hsts_age: 63072000
+
+# OCSP Stapling
+ssl_ocsp_stapling_resolvers:
+  - 1.1.1.1
+  - 1.0.0.1
+
+# Certificate options
+ssl_cert_domain: '{{ inventory_hostname }}'

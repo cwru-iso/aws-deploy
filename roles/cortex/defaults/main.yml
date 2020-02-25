@@ -1,0 +1,40 @@
+---
+# Cortex options
+cortex_rpm_release_pkg: https://dl.bintray.com/thehive-project/rpm-stable/thehive-project-release-1.1.0-2.noarch.rpm
+cortex_port: 9001
+cortex_secret_key: '***CHANGE_ME***'
+
+# Analyzer and Responder options
+# Repos will be automatically pulled into /opt, adjust your URLs below accordingly
+cortex_analyzers_repos:
+    - https://github.com/TheHive-Project/Cortex-Analyzers
+cortex_analyzer_urls:
+    - /opt/Cortex-Analyzers/analyzers
+cortex_responder_urls:
+    - /opt/Cortex-Analyzers/responders
+
+# Install system packages that are needed for Analyzers/Responders
+cortex_pkgs:
+    - git
+    - '@Development Tools'
+    - python-devel
+    - python-pip
+    - python3-devel
+    - python3-pip
+    - python-wheel
+    - python3-wheel
+    - libffi-devel
+    - ssdeep-devel
+    - ssdeep-libs
+    - perl-Image-ExifTool
+    - perl-File-LibMagic
+    - openssl-devel
+
+# ElasticSearch options
+elasticsearch_index_name: cortex
+elasticsearch_uris:
+    - http://127.0.0.1:9200/
+
+# Python options
+pip2_exec: /usr/bin/pip2
+pip3_exec: /usr/bin/pip3

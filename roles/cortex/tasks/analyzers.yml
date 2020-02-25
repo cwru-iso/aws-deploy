@@ -1,0 +1,54 @@
+---
+- name: Install required Cortex Analyzer & Responder dependencies
+  yum:
+    name: '{{ cortex_pkgs }}'
+    state: latest
+  tags: analyzers
+
+- name: Clone Cortex Analyzer & Responder repos
+  git:
+    repo: '{{ item }}'
+    dest: '/opt/{{ item | basename | replace(".git", "") }}'
+    update: yes
+  with_items: '{{ cortex_analyzers_repos }}'
+  tags: analyzers
+
+- name: Clone Cortex Analyzer & Responder repos
+  git:
+    repo: '{{ item }}'
+    dest: '/opt/{{ item | basename | replace(".git", "") }}'
+    update: yes
+  with_items: '{{ cortex_analyzers_repos }}'
+  tags: analyzers
+
+- name: Building list of Analyzer & Responder requirements
+  find:
+    paths: '/opt/{{ item | basename | replace(".git", "") }}'
+    patterns: requirements.txt
+    file_type: file
+    recurse: yes
+  with_items: '{{ cortex_analyzers_repos }}'
+  register: pip_requirements
+  tags: [analyzers, pip]
+
+# This will likely fail for some packages - these can be safely ignored
+- name: Install required Analyzer & Responder Python2 dependencies
+  pip:
+    requirements: '{{ item }}'
+    executable: '{{ pip2_exec }}'
+    extra_args: --ignore-installed
+    umask: '0022'
+  with_items: '{{ pip_requirements.results | map(attribute="files") | sum(start=[]) | map(attribute="path") | list }}'
+  ignore_errors: yes  # Ignore pip failures
+  tags: [analyzers, pip]
+
+# This might fail for some packages - these can be safely ignored
+- name: Install required Analyzer & Responder Python3 dependencies
+  pip:
+    requirements: '{{ item }}'
+    executable: '{{ pip3_exec }}'
+    extra_args: --ignore-installed
+    umask: '0022'
+  with_items: '{{ pip_requirements.results | map(attribute="files") | sum(start=[]) | map(attribute="path") | list }}'
+  ignore_errors: yes  # Ignore pip failures
+  tags: [analyzers, pip]

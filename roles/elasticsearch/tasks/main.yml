@@ -1,0 +1,33 @@
+---
+- name: Increase system vm.max_map_count
+  sysctl:
+    name: vm.max_map_count
+    value: '{{ max_map_count | string }}'
+    state: present
+    sysctl_set: yes
+    reload: yes
+  tags: elasticsearch
+
+- name: Create ElasticSearch docker container
+  docker_container:
+    name: elasticsearch
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:{{ elasticsearch_container_version }}'
+    restart_policy: unless-stopped
+    ulimits: nofile:65536:65536
+    env:
+      cluster.name: '{{ elasticsearch_cluster_name }}'
+      http.host: '{{ elasticsearch_container_host }}'
+      transport.host: '{{ elasticsearch_container_host }}'
+      xpack.security.enabled: 'false'
+      script.inline: 'true'
+      thread_pool.index.queue_size: '{{ elasticsearch_queue_size | string }}'
+      thread_pool.search.queue_size: '{{ elasticsearch_queue_size | string }}'
+      thread_pool.bulk.queue_size: '{{ elasticsearch_queue_size | string }}'
+      discovery.type: single-node
+      TZ: '{{ elasticsearch_container_timezone }}'
+    ports:
+      - '{{ elasticsearch_container_host }}:{{ elasticsearch_container_http_port }}:9200'
+      - '{{ elasticsearch_container_host }}:{{ elasticsearch_container_tcp_port }}:9300'
+    volumes:
+      - '{{ elasticsearch_container_data }}:/usr/share/elasticsearch/data'
+  tags: elasticsearch

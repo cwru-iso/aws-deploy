@@ -1,0 +1,11 @@
+# VSCode
+.vscode/
+
+# Mac files
+.DS_Store
+
+# Ansible
+*.retry
+inventories/
+files/
+ansible_vault.key

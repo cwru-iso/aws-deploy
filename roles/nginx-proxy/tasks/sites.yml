@@ -1,0 +1,21 @@
+---
+- name: Create nginx-proxy sites directory
+  file:
+    path: '{{ proxy_container_path }}/sites'
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0755'
+  tags: sites
+
+- name: Copy nginx site configuration
+  template:
+    src: '{{ ssl_config_type }}.conf.j2'
+    dest: '{{ proxy_container_path }}/sites/{{ ssl_cert_domain }}.conf'
+    owner: root
+    group: root
+    mode: '0644'
+  tags: sites
+      
+    

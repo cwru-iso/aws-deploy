@@ -1,0 +1,7 @@
+---
+- hosts: elasticsearch
+  become: yes
+  roles:
+    - common
+    - docker
+    - elasticsearch

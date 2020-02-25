@@ -1,0 +1,21 @@
+---
+# TheHive options
+thehive_rpm_release_pkg: https://dl.bintray.com/thehive-project/rpm-stable/thehive-project-release-1.1.0-2.noarch.rpm
+thehive_port: 9000
+thehive_secret_key: '***CHANGE_ME***'
+
+# Cortex instances
+thehive_cortex:
+    - name: cortex
+      url: http://127.0.0.1:9001
+      key: API_KEY
+
+# WebHook options
+thehive_webhooks:
+    - name: webhooks
+      url: http://127.0.0.1
+
+# ElasticSearch options
+elasticsearch_index_name: thehive
+elasticsearch_uris:
+    - http://127.0.0.1:9200/

@@ -1,0 +1,8 @@
+---
+- hosts: cortex
+  become: yes
+  roles:
+    - common
+    - cortex
+    - docker
+    - nginx-proxy

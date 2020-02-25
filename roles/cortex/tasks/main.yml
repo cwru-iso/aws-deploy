@@ -1,0 +1,37 @@
+---
+- name: Install Cortex repository
+  yum:
+    name: '{{ cortex_rpm_release_pkg }}'
+    state: present
+  tags: cortex
+
+- name: Install Cortex
+  yum:
+    name: cortex
+    state: latest
+    update_cache: yes
+  tags: cortex
+
+- name: Copy Cortex configuration
+  template:
+    src: application.conf.j2
+    dest: '/etc/cortex/application.conf'
+    owner: root
+    group: root
+    mode: '0644'
+  tags: cortex
+
+- import_tasks: analyzers.yml
+  tags: cortex
+
+- name: Enable Cortex service 
+  systemd:
+    name: cortex
+    enabled: yes
+  tags: cortex
+
+- name: Ensure Cortex service is updated 
+  systemd:
+    name: cortex
+    state: restarted
+  tags: cortex

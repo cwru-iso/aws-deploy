@@ -1,0 +1,8 @@
+---
+- hosts: bookstack
+  become: yes
+  roles:
+    - common
+    - docker
+    - bookstack
+    - nginx-proxy
