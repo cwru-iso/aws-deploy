@@ -1,0 +1,31 @@
+---
+- name: Install docker dependencies
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: latest
+  become: yes # as root
+  tags: docker
+
+# This is not supported in the yum_repository module
+# https://stackoverflow.com/questions/53976165/importing-adding-a-yum-repo-file-using-ansible
+- name: Add docker repository
+  command:
+    cmd: 'yum-config-manager --add-repo https://download.docker.com/linux/{{ ansible_distribution | lower | replace("redhat", "centos") }}/docker-ce.repo'
+    creates: /etc/yum.repos.d/docker-ce.repo
+    warn: no
+  become: yes # as root
+  tags: docker
+
+- name: Install docker
+  yum:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+    update_cache: yes
+  become: yes # as root
+  tags: docker

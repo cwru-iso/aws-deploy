@@ -1,0 +1,7 @@
+---
+- fail:
+    msg: Qualys ActivationID and CustomerID must be set
+  when: qualys_activation_id != "" or qualys_customer_id != ""
+
+- include_tasks: '{{ ansible_os_family | lower }}.yml'
+  tags: qualys

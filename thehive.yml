@@ -2,7 +2,6 @@
 - hosts: thehive
   become: yes
   roles:
-    - common
     - thehive
     - docker
     - nginx-proxy

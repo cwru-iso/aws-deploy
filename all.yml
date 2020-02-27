@@ -1,4 +1,9 @@
 ---
+- hosts: all
+  roles:
+    - common
+    - qualys
+
 - import_playbook: bookstack.yml
 - import_playbook: elasticsearch.yml
 - import_playbook: cortex.yml

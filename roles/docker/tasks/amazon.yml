@@ -1,0 +1,22 @@
+---
+- name: Enable additional Amazon Linux packages
+  shell: amazon-linux-extras enable docker
+  become: yes # as root
+  tags: docker
+
+# This is not supported in the yum module
+# https://github.com/ansible/ansible/pull/31450#issuecomment-352889579
+- name: Clean yum metadata
+  command:
+    cmd: yum clean meta
+    warn: no
+  become: yes # as root
+  tags: docker
+
+- name: Install docker
+  yum:
+    name: docker
+    state: latest
+    update_cache: yes
+  become: yes # as root
+  tags: docker

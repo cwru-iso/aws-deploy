@@ -1,0 +1,28 @@
+---
+- name: Copy Qualys agent DEB
+  copy:
+    src: qualys-cloud-agent.deb
+    dest: /tmp/qualys-cloud-agent.deb
+  tags: qualys
+
+- name: Install/Update Qualys agent
+  apt:
+    name: /tmp/qualys-cloud-agent.deb
+    state: latest
+  become: yes # as root
+  tags: qualys
+
+- name: Activate agent
+  command:
+    argv:
+      - /usr/local/qualys/cloud-agent/bin/qualys-cloud-agent.sh
+      - 'ActivationId={{ qualys_activation_id }}'
+      - 'CustomerId={{ qualys_customer_id }}'
+  become: yes # as root
+  tags: qualys
+
+- name: Cleanup Qualys agent DEB
+  file:
+    path: /tmp/qualys-cloud-agent.deb
+    state: absent
+  tags: qualys
