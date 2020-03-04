@@ -1,0 +1,36 @@
+---
+- name: Install/Update yum-cron
+  yum:
+    name: yum-cron
+    state: latest
+  become: yes
+  tags: yumcron
+
+- name: Configure yum-cron
+  lineinfile:
+    dest: /etc/yum/yum-cron.conf
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: '^update_cmd =.+$', line: 'update_cmd = {{ yumcron_cmd }}' }
+    - { regexp: '^apply_updates =.+$', line: 'apply_updates = {{ yumcron_apply_updates }}' }
+  become: yes
+  register: yumcron_config
+  tags: yumcron
+
+- name: Restart yum-cron service to load new configuration changes 
+  systemd:
+    name: yum-cron
+    state: restarted
+    daemon_reload: yes
+  become: yes
+  when: yumcron_config.changed
+  tags: yumcron
+
+- name: Ensure yum-cron service is enabled and running 
+  systemd:
+    name: yum-cron
+    enabled: yes
+    state: started
+  become: yes
+  tags: yumcron

@@ -1,27 +1,36 @@
 ---
-- name: Add SSH keys to authorized_keys
-  authorized_key:
-    user: '{{ ssh_user }}'
-    key: '{{ item }}'
-    state: present
-  with_items: '{{ ssh_pubkeys }}'
-  tags: [common, ssh]
+- name: Set system hostname
+  hostname:
+    name: '{{ inventory_hostname }}'
+  become: yes
+  tags: common
 
 - name: Attempt to fix RPM database errors
   command:
     cmd: rpm --rebuilddb
     warn: no
+  become: yes
   tags: common
+
+- name: Add SSH keys to authorized_keys
+  authorized_key:
+    user: '{{ ansible_user }}'
+    key: '{{ item }}'
+    state: present
+  with_items: '{{ ssh_pubkeys }}'
+  tags:
+    - common
+    - ssh
 
 - import_tasks: mounts.yml
-  when: additional_mounts | length
-  tags: common
+  tags:
+    - common
+    - mounts
 
-- import_tasks: updates.yml
-  tags: common
-
-- import_tasks: extras.yml
-  tags: common
+- import_tasks: yumcron.yml
+  tags: 
+    - common
+    - yumcron
 
 - name: Install Python for future Ansible modules
   yum:
@@ -38,21 +47,15 @@
     name: '*'
     state: latest
     update_cache: yes
-  register: yum_updates
-  tags: [common, update]
-
-- name: Set system hostname
-  hostname:
-    name: '{{ inventory_hostname }}'
-  register: hostname
-  tags: common
-
-- import_tasks: qualys.yml
-  when: qualys_activation_id != "" and qualys_customer_id != ""
-  tags: common
+  become: yes
+  register: yum_update
+  tags:
+    - common
+    - updates
 
 - name: Reboot system to fully apply all changes
   reboot:
     reboot_timeout: 3600
-  when: yum_updates.changed or hostname.changed
+  become: yes
+  when: yum_update.changed
   tags: common

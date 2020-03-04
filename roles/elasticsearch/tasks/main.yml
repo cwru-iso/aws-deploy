@@ -6,9 +6,11 @@
     state: present
     sysctl_set: yes
     reload: yes
-  tags: elasticsearch
+  tags:
+    - elasticsearch
+    - sysctl
 
-- name: Create ElasticSearch docker container
+- name: Create/Update ElasticSearch docker container
   docker_container:
     name: elasticsearch
     image: 'docker.elastic.co/elasticsearch/elasticsearch:{{ elasticsearch_container_version }}'
@@ -24,10 +26,11 @@
       thread_pool.search.queue_size: '{{ elasticsearch_queue_size | string }}'
       thread_pool.bulk.queue_size: '{{ elasticsearch_queue_size | string }}'
       discovery.type: single-node
-      TZ: '{{ elasticsearch_container_timezone }}'
     ports:
       - '{{ elasticsearch_container_host }}:{{ elasticsearch_container_http_port }}:9200'
       - '{{ elasticsearch_container_host }}:{{ elasticsearch_container_tcp_port }}:9300'
     volumes:
       - '{{ elasticsearch_container_data }}:/usr/share/elasticsearch/data'
+    comparisons:
+      '*': strict
   tags: elasticsearch

@@ -1,15 +1,18 @@
 ---
-# ElasticSearch options
+# ElasticSearch cluster settings
 elasticsearch_cluster_name: elastic-cluster
 elasticsearch_queue_size: 10000
 
 # sysctl options (required for ElasticSearch)
 max_map_count: 262144
 
-# Container options
+# Elasticsearch version to pull
 elasticsearch_container_version: latest
+
+# Container network settings
 elasticsearch_container_http_port: 9200
 elasticsearch_container_tcp_port: 9300
 elasticsearch_container_host: 0.0.0.0
+
+# Elasticsearch volumes for persistent storage
 elasticsearch_container_data: /srv/docker/elasticsearch/data
-elasticsearch_container_timezone: America/New_York

@@ -1,6 +1,5 @@
 ---
 - hosts: bookstack
-  become: yes
   roles:
     - docker
     - bookstack

@@ -1,0 +1,31 @@
+---
+- name: Install TheHive repository
+  yum:
+    name: '{{ thehive_release_pkg }}'
+    state: present
+  become: yes
+  tags: repo
+
+- name: Check if Amazon Linux Java repository is enabled
+  command:
+    cmd: yum repolist enabled | grep -q amzn2extra-java-openjdk11
+    warn: no
+  register: yum_repolist
+  tags: repo
+
+# This will NOT install the packages, but allow them to be installed via yum later
+- name: Enable Amazon Linux docker repository
+  command: amazon-linux-extras enable java-openjdk11
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo
+
+# This is not supported in the yum module
+# https://github.com/ansible/ansible/pull/31450#issuecomment-352889579
+- name: Clean and Update yum cache
+  command:
+    cmd: yum clean all && yum check-update
+    warn: no
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo

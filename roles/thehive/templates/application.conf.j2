@@ -48,7 +48,7 @@ play.http.parser.maxDiskBuffer = 1G
 # Cortex
 play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
-{% for cortex in thehive_cortex %}
+{% for cortex in thehive_cortex_instances %}
   "{{ cortex.name }}" {
     url = "{{ cortex.url }}"
     key = "{{ cortex.key }}"

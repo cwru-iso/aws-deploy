@@ -1,6 +1,5 @@
 ---
 - hosts: thehive
-  become: yes
   roles:
     - thehive
     - docker

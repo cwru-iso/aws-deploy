@@ -1,6 +1,5 @@
 ---
 - hosts: elasticsearch
-  become: yes
   roles:
     - docker
     - elasticsearch

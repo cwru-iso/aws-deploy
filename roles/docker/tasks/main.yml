@@ -1,27 +1,43 @@
 ---
-- include_task: '{{ ansible_os_family | lower }}.yml'
-  when: ansible_distribution != "Amazon"
+- import_tasks: repo.yml
+  tags:
+    - docker
+    - repo
+
+- name: Install/Update docker
+  yum:
+    name: docker
+    state: latest
+  become: yes
   tags: docker
 
-# Amazon is bit unique...
-# Only works on Amazon Linux 2
-- include_tasks: amazon.yml
-  when: ansible_distribution == "Amazon"
-  tags: docker
-
-- name: Enable docker service and ensure it is running
+- name: Ensure docker service is enabled and running 
   systemd:
     name: docker
     enabled: yes
     state: started
-  become: yes # as root
+  become: yes
   tags: docker
 
-# This is required for any Ansible docker modules
-- name: Install docker Python package
+- name: Install/Update required Python packages for docker
+  yum:
+    name:
+      - python
+      - python3
+      - python-pip
+      - python3-pip
+    state: latest
+  become: yes
+  tags:
+    - docker
+    - python
+
+- name: Install/Update docker pip package for Ansible modules
   pip:
     name: docker
     state: latest
-    umask: '0022' # Allow all users to access this
-  become: yes # as root
-  tags: docker
+    umask: '0022'   # accessible globally
+  become: yes
+  tags:
+    - docker
+    - python

@@ -1,7 +1,41 @@
 ---
-- fail:
-    msg: Qualys ActivationID and CustomerID must be set
-  when: qualys_activation_id != "" or qualys_customer_id != ""
+- name: Copy Qualys agent RPM to remote host
+  copy:
+    src: qualys-cloud-agent.rpm
+    dest: /tmp/qualys-cloud-agent.rpm
+    owner: root
+    group: root
+    mode: '0644'
+  tags: qualys
+    
+- name: Install/Update Qualys agent
+  yum:
+    name: /tmp/qualys-cloud-agent.rpm
+    state: present
+  become: yes
+  tags: qualys
+    
+- name: Activate Qualys agent
+  command:
+    argv:
+      - /usr/local/qualys/cloud-agent/bin/qualys-cloud-agent.sh
+      - 'ActivationId={{ qualys_activation_id }}'
+      - 'CustomerId={{ qualys_customer_id }}'
+  become: yes
+  tags: qualys
+    
+- name: Remove Qualys agent RPM from remote host
+  file:
+    path: /tmp/qualys-cloud-agent.rpm
+    state: absent
+  tags:
+    - qualys
+    - cleanup
 
-- include_tasks: '{{ ansible_os_family | lower }}.yml'
+- name: Ensure Qualys agent service is enabled and running 
+  systemd:
+    name: qualys-cloud-agent
+    enabled: yes
+    state: started
+  become: yes
   tags: qualys

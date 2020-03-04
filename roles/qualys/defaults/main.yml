@@ -1,6 +1,6 @@
 ---
-# Qualys ActivationID (required)
+# Qualys Activation ID
 qualys_activation_id: ''
 
-# Qualys CustomerID (required)
+# Qualys Customer ID
 qualys_customer_id: ''

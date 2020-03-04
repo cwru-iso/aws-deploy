@@ -1,21 +1,24 @@
 ---
 # Authorized SSH keys
-ssh_user: ec2-user
 ssh_pubkeys: []
+#  - ssh-rsa AAAAB3NzaC...
+#  - ssh-ed25519 AAAAC3NzaC1...
 
-# yum-cron options
-yumcron_config: /etc/yum/yum-cron.conf
-yumcron_cmd: default
-yumcron_apply: yes
-
-# Extra Amazon Linux packages
-amz_extra_packages:
-  - docker
-  - epel
-
-# Mount extra devices
+# Additional mounts
 additional_mounts: []
+#  - path: /mnt/example-data
+#    src: /dev/sdf
+#    fstype: xfs
+#    opts: defaults,nofail
 
-# Qualys agent options
-qualys_activation_id: ''
-qualys_customer_id: ''
+# yum command to run when performing updates
+#   default                            = yum upgrade
+#   security                           = yum --security upgrade
+#   security-severity:Critical         = yum --sec-severity=Critical upgrade
+#   minimal                            = yum --bugfix update-minimal
+#   minimal-security                   = yum --security update-minimal
+#   minimal-security-severity:Critical =  --sec-severity=Critical update-minimal
+yumcron_cmd: default
+
+# Automatically install updates
+yumcron_apply_updates: yes

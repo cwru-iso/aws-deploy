@@ -1,18 +1,28 @@
 ---
 # Generate APP_KEY with: echo "base64:$(openssl rand -base64 32)"
 bookstack_app_key: ''
+
+# BookStack URL
+# Required for 3rd-party logins
 bookstack_app_url: https://docs.example.com
 
-# Database options
-bookstack_db_host: localhost:3306
+# Database settings
+bookstack_db_host: localhost
+bookstack_db_port: 3306
 bookstack_db_name: bookstack
 bookstack_db_user: bookstack
 bookstack_db_password: bookstack
 
-# Container options
+# BookStack version to pull
 bookstack_container_version: latest
+
+# Container network settings
 bookstack_container_port: 8080
 bookstack_container_host: 127.0.0.1
+
+# BookStack version to pull
+bookstack_container_version: latest
+
+# BookStack volumes for persistent storage
 bookstack_container_uploads_path: /srv/docker/bookstack/uploads
 bookstack_container_storage_path: /srv/docker/bookstack/storage
-bookstack_container_timezone: America/New_York

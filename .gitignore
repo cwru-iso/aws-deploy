@@ -6,6 +6,6 @@
 
 # Ansible
 *.retry
-inventories/
-files/
+/inventories/
+/files/
 ansible_vault.key
