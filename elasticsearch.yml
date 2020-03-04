@@ -1,5 +1,7 @@
 ---
 - hosts: elasticsearch
   roles:
+    - common
+    - qualys
     - docker
     - elasticsearch

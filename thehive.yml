@@ -1,6 +1,8 @@
 ---
 - hosts: thehive
   roles:
+    - common
+    - qualys
     - thehive
     - docker
     - nginx-proxy

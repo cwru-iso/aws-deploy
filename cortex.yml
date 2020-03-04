@@ -1,6 +1,8 @@
 ---
 - hosts: cortex
   roles:
+    - common
+    - qualys
     - cortex
     - docker
     - nginx-proxy
