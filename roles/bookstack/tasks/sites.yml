@@ -1,0 +1,23 @@
+---
+- name: Ensure nginx sites directory exists
+  file:
+    path: '{{ bookstack_container_volume }}/nginx/site-confs'
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+  tags: sites
+
+- name: Create/Update nginx site configuration
+  template:
+    src: '{{ ssl_config_type }}.conf.j2'
+    dest: '{{ bookstack_container_volume }}/nginx/site-confs/default'
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+  tags: sites
+      
+    

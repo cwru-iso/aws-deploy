@@ -1,21 +1,41 @@
 ---
+- import_tasks: certs.yml
+  tags:
+    - bookstack
+    - certs
+
+- import_tasks: sites.yml
+  tags:
+    - bookstack
+    - sites
+
+- name: Set/Update BookStack APP_KEY
+  copy:
+    content: '{{ bookstack_app_key }}'
+    dest: '{{ bookstack_container_volume }}/BOOKSTACK_APP_KEY.txt'
+    owner: '{{ bookstack_uid | string }}'
+    group: '{{ bookstack_gid | string }}'
+    mode: '0600'
+  tags: bookstack
+
 - name: Create/Update BookStack docker container
   docker_container:
     name: bookstack
-    image: 'solidnerd/bookstack:{{ bookstack_container_version }}'
+    image: 'linuxserver/bookstack:{{ bookstack_container_version }}'
     restart_policy: unless-stopped
     env:
-      APP_KEY: '{{ bookstack_app_key }}'
+      PUID: '{{ bookstack_uid | string }}'
+      PGID: '{{ bookstack_gid | string }}'
       APP_URL: '{{ bookstack_app_url }}'
-      DB_HOST: '{{ bookstack_db_host }}:{{ bookstack_db_port }}'
+      DB_HOST: '{{ bookstack_db_host }}'
       DB_DATABASE: '{{ bookstack_db_name }}'
-      DB_USERNAME: '{{ bookstack_db_user }}'
-      DB_PASSWORD: '{{ bookstack_db_password }}'
+      DB_USER: '{{ bookstack_db_user }}'
+      DB_PASS: '{{ bookstack_db_password }}'
     ports:
-      - '{{ bookstack_container_host }}:{{ bookstack_container_port }}:80'
+      - '{{ bookstack_container_host }}:80:80'
+      - '{{ bookstack_container_host }}:443:443'
     volumes:
-      - '{{ bookstack_container_uploads_path }}:/var/www/bookstack/public/uploads'
-      - '{{ bookstack_container_storage_path }}:/var/www/bookstack/storage/uploads'
+      - '{{ bookstack_container_volume }}:/config'
     comparisons:
       '*': strict
   become: yes

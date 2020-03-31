@@ -1,0 +1,53 @@
+---
+- name: Ensure nginx certs directory exists
+  file:
+    path: '{{ bookstack_container_volume }}/keys'
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+  tags: certs
+
+- name: Copy nginx certificate
+  copy:
+    src: '{{ role_name }}/cert.crt'
+    dest: '{{ bookstack_container_volume }}/keys/'
+    mode: '0644'
+  become: yes
+  tags: certs
+
+# Funky way of including an OPTIONAL file and registering it for later use
+# If the file isn't copied then the sites will NOT have OCSP Stapling
+- name: Copy (optional) nginx certificate chains
+  copy:
+    src: '{{ item }}'
+    dest: '{{ bookstack_container_volume }}/keys/'
+    mode: '0644'
+  become: yes
+  with_first_found:
+    - files:
+        - '{{ role_name }}/cert.chain.crt'
+      skip: yes
+  register: ssl_ocsp_stapling
+  tags: certs
+
+- name: Copy nginx certificate keys
+  copy:
+    src: '{{ role_name }}/cert.key'
+    dest: '{{ bookstack_container_volume }}/keys/'
+    mode: '0600'
+  become: yes
+  tags: certs
+
+- name: Generate Diffie-Hellman parameters (only for intermediate/old sites)
+  openssl_dhparam:
+    path: '{{ bookstack_container_volume }}/keys/dhparam.pem'
+    size: '{{ dhparam_size }}'
+  become: yes
+  when: ssl_config_type != "modern"
+  tags:
+    - certs
+    - dhparam
+    

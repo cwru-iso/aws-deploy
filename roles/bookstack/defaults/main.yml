@@ -6,9 +6,12 @@ bookstack_app_key: ''
 # Required for 3rd-party logins
 bookstack_app_url: https://docs.example.com
 
+# User and Group settings
+bookstack_uid: 1000
+bookstack_gid: 1000
+
 # Database settings
 bookstack_db_host: localhost
-bookstack_db_port: 3306
 bookstack_db_name: bookstack
 bookstack_db_user: bookstack
 bookstack_db_password: bookstack
@@ -17,12 +20,28 @@ bookstack_db_password: bookstack
 bookstack_container_version: latest
 
 # Container network settings
-bookstack_container_port: 8080
-bookstack_container_host: 127.0.0.1
-
-# BookStack version to pull
-bookstack_container_version: latest
+bookstack_http_port: 80
+bookstack_https_port: 443
+bookstack_container_host: 0.0.0.0
 
 # BookStack volumes for persistent storage
-bookstack_container_uploads_path: /srv/docker/bookstack/uploads
-bookstack_container_storage_path: /srv/docker/bookstack/storage
+bookstack_container_volume: /srv/docker/bookstack
+
+# SSL configuration type
+# See: https://ssl-config.mozilla.org/
+ssl_config_type: modern
+
+# Certificate domain
+ssl_cert_domain: '{{ bookstack_app_url | regex_replace("^https?://", "") }}'
+
+# HSTS settings
+ssl_hsts_enabled: no
+ssl_hsts_age: 63072000
+
+# OCSP Stapling settings
+ssl_ocsp_stapling_resolvers:
+  - 1.1.1.1
+  - 1.0.0.1
+
+# Diffie-Hellman key size
+dhparam_size: 4096
