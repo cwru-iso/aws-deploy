@@ -3,7 +3,9 @@
   command:
     cmd: yum repolist enabled | grep -q amzn2extra-docker
     warn: no
+  changed_when: no
   register: yum_repolist
+  failed_when: yum_repolist.rc == 2
   tags: repo
 
 # This will NOT install the packages, but allow them to be installed via yum later
