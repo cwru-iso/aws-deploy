@@ -10,8 +10,8 @@
     - sites
 
 - name: Create/Update nginx configuration
-  template:
-    src: nginx.conf.j2
+  copy:
+    src: nginx.conf
     dest: '{{ proxy_container_path }}/nginx.conf'
     owner: root
     group: root

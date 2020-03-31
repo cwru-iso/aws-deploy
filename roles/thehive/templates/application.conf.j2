@@ -16,6 +16,8 @@ search {
   index = {{ elasticsearch_index_name }}
   # Address of the ElasticSearch instance
   uri = "{{ elasticsearch_uris | join(" ") }}"
+  # Enable SSL to connect to ElasticSearch
+  ssl.enabled = {{ elasticsearch_ssl }}
   # Scroll keepalive
   keepalive = 1m
   # Size of the page for scroll

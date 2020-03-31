@@ -1,6 +1,7 @@
 ---
 # Elasticsearch settings
 elasticsearch_index_name: cortex
+elasticsearch_ssl: false
 elasticsearch_uris: []
 #  - http://127.0.0.1:9200/
 

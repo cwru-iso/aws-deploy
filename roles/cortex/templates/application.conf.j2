@@ -43,6 +43,8 @@ search {
   index = {{ elasticsearch_index_name }}
   # Address of the ElasticSearch instance
   uri = "{{ elasticsearch_uris | join(" ") }}"
+  # Enable SSL to connect to ElasticSearch
+  ssl.enabled = {{ elasticsearch_ssl }}
   # Scroll keepalive
   keepalive = 1m
   # Size of the page for scroll
@@ -102,7 +104,14 @@ audit.name = audit
 
 analyzer {
   # Directory that holds analyzers
-  urls = [{{ cortex_analyzer_urls | map("regex_replace","(.+)","\"\\1\"") | join(",") }}]
+  urls = [
+  {% for analyzer in cortex_analyzers %}
+    {% set base_dir = "/opt/" + analyzer.repo | basename | replace(".git", "") %}
+    {% if "analyzers_dir" in analyzer and analyzer.analyzers_dir | length %}
+      "{{ base_dir }}/{{ analyzer.analyzers_dir }}"{{ "," if not loop.last else "" }}
+    {% endif %}
+  {% endfor %}
+  ]
 
   fork-join-executor {
     # Min number of threads available for analyze
@@ -116,7 +125,14 @@ analyzer {
 
 responder {
   # Directory that holds responders
-  urls = [{{ cortex_responder_urls | map("regex_replace","(.+)","\"\\1\"") | join(",") }}]
+  urls = [
+  {% for responder in cortex_analyzers %}
+    {% set base_dir = "/opt/" + responder.repo | basename | replace(".git", "") %}
+    {% if "responders_dir" in responder and responder.responders_dir | length %}
+      "{{ base_dir }}/{{ responder.responders_dir }}"{{ "," if not loop.last else "" }}
+    {% endif %}
+  {% endfor %}
+  ]
 
   fork-join-executor {
     # Min number of threads available for analyze

@@ -8,6 +8,7 @@
   yum:
     name: epel-release
     state: latest
+  become: yes
   tags: cortex
 
 - name: Install/Update globally required dependencies
@@ -29,6 +30,7 @@
   yum:
     name: cortex
     state: latest
+  become: yes
   tags: cortex
 
 - name: Create/Update Cortex configuration
@@ -40,7 +42,9 @@
     mode: '0644'
   become: yes
   register: cortex_config
-  tags: cortex
+  tags:
+    - cortex
+    - config
 
 - import_tasks: analyzers.yml
   tags: cortex
