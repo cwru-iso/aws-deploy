@@ -3,8 +3,6 @@
   copy:
     src: qualys-cloud-agent.rpm
     dest: /tmp/qualys-cloud-agent.rpm
-    owner: root
-    group: root
     mode: '0644'
   tags: qualys
     

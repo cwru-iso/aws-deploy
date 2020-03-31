@@ -32,6 +32,13 @@
     - common
     - yumcron
 
+- name: Install deltarpm for optimized updates
+  yum:
+    name: deltarpm
+    state: latest
+  become: yes
+  tags: common
+
 - name: Install Python for future Ansible modules
   yum:
     name:
@@ -40,6 +47,7 @@
       - python-pip
       - python3-pip
     state: latest
+  become: yes
   tags: python
 
 - name: Perform full system update
