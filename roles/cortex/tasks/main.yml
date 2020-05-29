@@ -49,6 +49,23 @@
 - import_tasks: analyzers.yml
   tags: cortex
 
+- name: Check if docker is installed
+  shell:
+    cmd: getent group docker
+    warn: no
+  changed_when: no
+  register: cortex_docker
+  tags: cortex
+
+- name: Enable Cortex docker support
+  user:
+    name: cortex
+    groups: docker
+    append: yes
+  become: yes
+  when: cortex_docker.rc == 0
+  tags: cortex
+
 - name: Restart Cortex service to load new configuration changes 
   systemd:
     name: cortex
