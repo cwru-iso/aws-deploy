@@ -22,6 +22,7 @@
   docker_container:
     name: bookstack
     image: 'linuxserver/bookstack:{{ bookstack_container_version }}'
+    pull: true
     restart_policy: unless-stopped
     env:
       PUID: '{{ bookstack_uid | string }}'

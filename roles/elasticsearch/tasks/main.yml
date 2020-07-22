@@ -14,6 +14,7 @@
   docker_container:
     name: elasticsearch
     image: 'docker.elastic.co/elasticsearch/elasticsearch:{{ elasticsearch_container_version }}'
+    pull: true
     restart_policy: unless-stopped
     ulimits: nofile:65536:65536
     env:

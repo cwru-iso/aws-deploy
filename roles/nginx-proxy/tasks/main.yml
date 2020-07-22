@@ -33,6 +33,7 @@
   docker_container:
     name: nginx-proxy
     image: nginx:alpine
+    pull: true
     network_mode: host
     ulimits: nofile:8192:8192
     restart_policy: unless-stopped
