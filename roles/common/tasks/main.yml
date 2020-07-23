@@ -15,8 +15,8 @@
 - name: Add SSH keys to authorized_keys
   authorized_key:
     user: '{{ ansible_user }}'
-    key: '{{ item }}'
-    state: present
+    key: '{{ item.key }}'
+    state: '{{ item.state }}'
   with_items: '{{ ssh_pubkeys }}'
   tags:
     - common
