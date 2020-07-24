@@ -58,6 +58,10 @@ search {
     # Maximum number of nested fields
     mapping.nested_fields.limit = 100
   }
+
+  ## Authentication configuration
+  search.username = "{{ elasticsearch_username }}"
+  search.password = "{{ elasticsearch_password }}"
 }
 
 auth.provider = ["local"]
