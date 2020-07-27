@@ -3,6 +3,6 @@
   roles:
     - common
     - qualys
-    - cortex
     - docker
+    - cortex
     - nginx-proxy
