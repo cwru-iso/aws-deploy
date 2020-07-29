@@ -10,7 +10,14 @@
   become: yes
   tags: sites
 
-- name: Create/Update nginx site configuration
+- name: Remove any existing sites
+  file:
+    path: '{{ proxy_container_path }}/sites/'
+    state: absent
+  become: yes
+  tags: sites
+
+- name: Create nginx site configuration
   template:
     src: '{{ ssl_config_type }}.conf.j2'
     dest: '{{ proxy_container_path }}/sites/{{ ssl_cert_domain }}.conf'
