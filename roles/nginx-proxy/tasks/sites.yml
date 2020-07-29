@@ -1,11 +1,4 @@
 ---
-- name: Remove any existing sites
-  file:
-    path: '{{ proxy_container_path }}/sites/'
-    state: absent
-  become: yes
-  tags: sites
-
 - name: Ensure nginx sites directory exists
   file:
     path: '{{ proxy_container_path }}/sites'
@@ -14,6 +7,15 @@
     owner: root
     group: root
     mode: '0755'
+  become: yes
+  tags: sites
+
+- name: Remove any existing sites
+  file:
+    path: '{{ proxy_container_path }}/sites/{{ item }}'
+    state: absent
+  with_fileglob:
+    - '{{ proxy_container_path }}/sites/*'
   become: yes
   tags: sites
 
