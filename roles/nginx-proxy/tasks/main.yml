@@ -46,3 +46,10 @@
       '*': strict
   become: yes
   tags: proxy
+
+- name: Force nginx reload
+  command:
+    cmd: docker exec -it nginx-proxy nginx -s reload
+    warn: no
+  become: yes
+  tags: proxy
