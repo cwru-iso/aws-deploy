@@ -1,0 +1,7 @@
+---
+# SSL settings
+splunk_ssl_domain: '{{ inventory_hostname }}'
+splunk_ssl_path: '/opt/splunk/etc/auth/splunkweb'
+
+# Splunk settings
+splunk_home: /opt/splunk

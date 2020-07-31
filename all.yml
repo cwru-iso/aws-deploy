@@ -3,3 +3,4 @@
 - import_playbook: elasticsearch.yml
 - import_playbook: cortex.yml
 - import_playbook: thehive.yml
+- import_playbook: splunk.yml

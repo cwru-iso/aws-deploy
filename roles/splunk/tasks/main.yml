@@ -1,0 +1,38 @@
+---
+- name: Copy Splunk certificate
+  copy:
+    src: '{{ role_name }}/{{ splunk_ssl_domain }}.pem'
+    dest: '{{ splunk_ssl_path }}'
+    mode: '0644'
+    owner: splunk
+    group: splunk
+  become: yes
+  tags:
+    - splunk 
+    - certs
+
+- name: Copy Splunk certificate key
+  copy:
+    src: '{{ role_name }}/{{ splunk_ssl_domain }}.key'
+    dest: '{{ splunk_ssl_path }}'
+    mode: '0600'
+    owner: splunk
+    group: splunk
+  become: yes
+  tags:
+    - splunk 
+    - certs
+
+- name: Create/Update Splunk web configuration
+  template:
+    src: web.conf.j2
+    dest: '{{ splunk_home }}/etc/system/local/web.conf'
+    owner: splunk
+    group: splunk
+    mode: '0644'
+  become: yes
+  tags: splunk
+
+- debug:
+    msg: "Certificates updates successfully -- Please MANUALLY restart the splunk instance"
+  tags: splunk
