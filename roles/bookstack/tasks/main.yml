@@ -34,7 +34,7 @@
       DB_PASS: '{{ bookstack_db_password }}'
       MAIL_DRIVER: '{{ bookstack_mail_driver }}'
       MAIL_HOST: '{{ bookstack_mail_host }}'
-      MAIL_PORT: '{{ bookstack_mail_port }}'
+      MAIL_PORT: '{{ bookstack_mail_port | string }}'
       MAIL_ENCRYPTION: '{{ bookstack_mail_encryption }}'
       MAIL_USERNAME: '{{ bookstack_mail_username }}'
       MAIL_PASSWORD: '{{ bookstack_mail_password }}'
