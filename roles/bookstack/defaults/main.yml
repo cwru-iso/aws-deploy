@@ -16,6 +16,16 @@ bookstack_db_name: bookstack
 bookstack_db_user: bookstack
 bookstack_db_password: bookstack
 
+# Mail settings
+bookstack_mail_driver: ''
+bookstack_mail_host: localhost
+bookstack_mail_port: 25
+bookstack_mail_encryption: tls
+bookstack_mail_username: ''
+bookstack_mail_password: ''
+bookstack_mail_from_name: BookStack
+bookstack_mail_from: bs@bookstackapp.com
+
 # BookStack version to pull
 bookstack_container_version: latest
 
