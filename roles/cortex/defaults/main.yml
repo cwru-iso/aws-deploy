@@ -1,40 +1,37 @@
 ---
-# Cortex options
-cortex_rpm_release_pkg: https://dl.bintray.com/thehive-project/rpm-stable/thehive-project-release-1.1.0-2.noarch.rpm
-cortex_port: 9001
+# Elasticsearch settings
+elasticsearch_index_name: cortex
+elasticsearch_username: ''
+elasticsearch_password: ''
+elasticsearch_ssl: false
+elasticsearch_uris: []
+#  - http://127.0.0.1:9200/
+
+# Cortex secret key for secured communications
+# This MUST be the same across multiple instances
 cortex_secret_key: '***CHANGE_ME***'
 
-# Analyzer and Responder options
-# Repos will be automatically pulled into /opt, adjust your URLs below accordingly
-cortex_analyzers_repos:
-    - https://github.com/TheHive-Project/Cortex-Analyzers
-cortex_analyzer_urls:
-    - /opt/Cortex-Analyzers/analyzers
-cortex_responder_urls:
-    - /opt/Cortex-Analyzers/responders
+# Cortex port
+cortex_port: 9001
 
-# Install system packages that are needed for Analyzers/Responders
-cortex_pkgs:
-    - git
-    - '@Development Tools'
-    - python-devel
-    - python-pip
-    - python3-devel
-    - python3-pip
-    - python-wheel
-    - python3-wheel
-    - libffi-devel
-    - ssdeep-devel
-    - ssdeep-libs
-    - perl-Image-ExifTool
-    - perl-File-LibMagic
-    - openssl-devel
+# Analyzers and Responders
+# Repos will be automatically pulled into /opt
+cortex_analyzers:
+  - repo: https://github.com/TheHive-Project/Cortex-Analyzers
 
-# ElasticSearch options
-elasticsearch_index_name: cortex
-elasticsearch_uris:
-    - http://127.0.0.1:9200/
+    # Directory within the repo that holds Analyzers/Responders
+    # Use '.' to use the entire repo as an Analyzer/Responder
+    # Leave blank/unset if the repo doesn't have any Analyzers/Responders
+    analyzers_dir: analyzers
+    responders_dir: responders
 
-# Python options
-pip2_exec: /usr/bin/pip2
-pip3_exec: /usr/bin/pip3
+    # Additional system packages needed by Analyzers/Responders
+    system_pkgs:
+      - python-wheel
+      - python3-wheel
+      - libffi-devel
+      - ssdeep-devel
+      - ssdeep-libs
+      - perl-Image-ExifTool
+      - perl-File-LibMagic
+      - openssl-devel

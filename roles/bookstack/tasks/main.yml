@@ -1,21 +1,51 @@
 ---
-- name: Create BookStack docker container
+- import_tasks: certs.yml
+  tags:
+    - bookstack
+    - certs
+
+- import_tasks: sites.yml
+  tags:
+    - bookstack
+    - sites
+
+- name: Set/Update BookStack APP_KEY
+  copy:
+    content: '{{ bookstack_app_key }}'
+    dest: '{{ bookstack_container_volume }}/BOOKSTACK_APP_KEY.txt'
+    owner: '{{ bookstack_uid | string }}'
+    group: '{{ bookstack_gid | string }}'
+    mode: '0600'
+  tags: bookstack
+
+- name: Create/Update BookStack docker container
   docker_container:
     name: bookstack
-    image: 'solidnerd/bookstack:{{ bookstack_container_version }}'
+    image: 'linuxserver/bookstack:{{ bookstack_container_version }}'
+    pull: true
     restart_policy: unless-stopped
-    restart: yes
     env:
-      APP_KEY: '{{ bookstack_app_key }}'
+      PUID: '{{ bookstack_uid | string }}'
+      PGID: '{{ bookstack_gid | string }}'
       APP_URL: '{{ bookstack_app_url }}'
       DB_HOST: '{{ bookstack_db_host }}'
       DB_DATABASE: '{{ bookstack_db_name }}'
-      DB_USERNAME: '{{ bookstack_db_user }}'
-      DB_PASSWORD: '{{ bookstack_db_password }}'
-      TZ: '{{ bookstack_container_timezone }}'
+      DB_USER: '{{ bookstack_db_user }}'
+      DB_PASS: '{{ bookstack_db_password }}'
+      MAIL_DRIVER: '{{ bookstack_mail_driver }}'
+      MAIL_HOST: '{{ bookstack_mail_host }}'
+      MAIL_PORT: '{{ bookstack_mail_port | string }}'
+      MAIL_ENCRYPTION: '{{ bookstack_mail_encryption }}'
+      MAIL_USERNAME: '{{ bookstack_mail_username }}'
+      MAIL_PASSWORD: '{{ bookstack_mail_password }}'
+      MAIL_FROM: '{{ bookstack_mail_from }}'
+      MAIL_FROM_NAME: '{{ bookstack_mail_from_name }}'
     ports:
-      - '{{ bookstack_container_host }}:{{ bookstack_container_port }}:80'
+      - '{{ bookstack_container_host }}:80:80'
+      - '{{ bookstack_container_host }}:443:443'
     volumes:
-      - '{{ bookstack_container_uploads_path }}:/var/www/bookstack/public/uploads'
-      - '{{ bookstack_container_storage_path }}:/var/www/bookstack/storage/uploads'
+      - '{{ bookstack_container_volume }}:/config'
+    comparisons:
+      '*': strict
+  become: yes
   tags: bookstack

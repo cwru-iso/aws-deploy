@@ -1,0 +1,26 @@
+---
+- name: Check if Amazon Linux docker repository is enabled
+  command:
+    cmd: yum repolist enabled | grep -q amzn2extra-docker
+    warn: no
+  changed_when: no
+  register: yum_repolist
+  failed_when: yum_repolist.rc == 2
+  tags: repo
+
+# This will NOT install the packages, but allow them to be installed via yum later
+- name: Enable Amazon Linux docker repository
+  command: amazon-linux-extras enable docker
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo
+
+# This is not supported in the yum module
+# https://github.com/ansible/ansible/pull/31450#issuecomment-352889579
+- name: Clean and Update yum cache
+  command:
+    cmd: yum clean all && yum check-update
+    warn: no
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo

@@ -1,28 +1,31 @@
 ---
-# Container options
+# Container network settings
 proxy_container_http_port: 80
 proxy_container_https_port: 443
+
+# Path to create/store volumes for persistent storage
+# Will create {sites,certs} directory within it
 proxy_container_path: /srv/docker/nginx-proxy
 
-# Proxy options
+# Proxy application settings
 proxy_application_port: 8080
 proxy_application_host: 127.0.0.1
 
-## SSL options
-# Type can be 'modern' or 'intermediate'
+# SSL configuration type
+# See: https://ssl-config.mozilla.org/
 ssl_config_type: modern
 
-# DH options
-dhparam_size: 4096
+# Certificate domain
+ssl_cert_domain: '{{ inventory_hostname }}'
 
-# HSTS
+# HSTS settings
 ssl_hsts_enabled: no
 ssl_hsts_age: 63072000
 
-# OCSP Stapling
+# OCSP Stapling settings
 ssl_ocsp_stapling_resolvers:
   - 1.1.1.1
   - 1.0.0.1
 
-# Certificate options
-ssl_cert_domain: '{{ inventory_hostname }}'
+# Diffie-Hellman key size
+dhparam_size: 4096

@@ -1,37 +1,84 @@
 ---
-- name: Install Cortex repository
+- import_tasks: repo.yml
+  tags:
+    - cortex
+    - repo
+
+- name: Install/Update Extra Packages for Enterprise Linux
   yum:
-    name: '{{ cortex_rpm_release_pkg }}'
-    state: present
+    name: epel-release
+    state: latest
+  become: yes
   tags: cortex
 
-- name: Install Cortex
+- name: Install/Update globally required dependencies
+  yum:
+    name:
+      - git
+      - python-devel
+      - python-pip
+      - python3-devel
+      - python3-pip
+      - '@Development Tools'
+    state: latest
+  become: yes
+  tags:
+    - cortex
+    - python
+
+- name: Install/Update Cortex
   yum:
     name: cortex
     state: latest
-    update_cache: yes
+  become: yes
   tags: cortex
 
-- name: Copy Cortex configuration
+- name: Create/Update Cortex configuration
   template:
     src: application.conf.j2
-    dest: '/etc/cortex/application.conf'
+    dest: /etc/cortex/application.conf
     owner: root
     group: root
     mode: '0644'
-  tags: cortex
+  become: yes
+  register: cortex_config
+  tags:
+    - cortex
+    - config
 
 - import_tasks: analyzers.yml
   tags: cortex
 
-- name: Enable Cortex service 
-  systemd:
-    name: cortex
-    enabled: yes
+- name: Check if docker is installed
+  shell:
+    cmd: getent group docker
+    warn: no
+  changed_when: no
+  register: cortex_docker
   tags: cortex
 
-- name: Ensure Cortex service is updated 
+- name: Enable Cortex docker support
+  user:
+    name: cortex
+    groups: docker
+    append: yes
+  become: yes
+  when: cortex_docker.rc == 0
+  tags: cortex
+
+- name: Restart Cortex service to load new configuration changes 
   systemd:
     name: cortex
     state: restarted
+    daemon_reload: yes
+  become: yes
+  when: cortex_config.changed
+  tags: cortex
+
+- name: Ensure Cortex service is enabled and running 
+  systemd:
+    name: cortex
+    enabled: yes
+    state: started
+  become: yes
   tags: cortex

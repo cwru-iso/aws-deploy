@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+# Created on: {{ ansible_date_time.date }} {{ ansible_date_time.time }}
+
+# https://docs.splunk.com/Documentation/Splunk/6.5.6/Security/SecureSplunkWebusingasignedcertificate
+[settings]
+enableSplunkWebSSL = true
+privKeyPath = {{ splunk_ssl_path }}/{{ splunk_ssl_domain }}.key
+serverCert = {{ splunk_ssl_path }}/{{ splunk_ssl_domain }}.pem

@@ -1,7 +1,7 @@
 ---
 - hosts: elasticsearch
-  become: yes
   roles:
     - common
+    - qualys
     - docker
     - elasticsearch

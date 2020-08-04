@@ -1,18 +1,25 @@
 ---
-- name: Install docker
+- import_tasks: repo.yml
+  tags:
+    - docker
+    - repo
+
+- name: Install/Update docker
   yum:
     name: docker
     state: latest
+  become: yes
   tags: docker
 
-- name: Enable and start docker service 
+- name: Ensure docker service is enabled and running 
   systemd:
     name: docker
     enabled: yes
     state: started
+  become: yes
   tags: docker
 
-- name: Install required Python packages
+- name: Install/Update required Python packages for docker
   yum:
     name:
       - python
@@ -20,11 +27,17 @@
       - python-pip
       - python3-pip
     state: latest
-  tags: python
+  become: yes
+  tags:
+    - docker
+    - python
 
-- name: Install required pip packages
+- name: Install/Update docker pip package for Ansible modules
   pip:
     name: docker
     state: latest
-    umask: '0022'
-  tags: docker
+    umask: '0022'   # accessible globally
+  become: yes
+  tags:
+    - docker
+    - python

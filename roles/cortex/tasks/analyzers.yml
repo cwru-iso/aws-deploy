@@ -1,54 +1,65 @@
 ---
 - name: Install required Cortex Analyzer & Responder dependencies
   yum:
-    name: '{{ cortex_pkgs }}'
+    name: '{{ item.system_pkgs }}'
     state: latest
+  become: yes
+  with_items: '{{ cortex_analyzers }}'
+  loop_control:
+    label: '{{ item.system_pkgs }}'
   tags: analyzers
 
-- name: Clone Cortex Analyzer & Responder repos
+- name: Pull Cortex Analyzer & Responder repositories
   git:
-    repo: '{{ item }}'
-    dest: '/opt/{{ item | basename | replace(".git", "") }}'
+    repo: '{{ item.repo }}'
+    dest: '/opt/{{ item.repo | basename | replace(".git", "") }}'
     update: yes
-  with_items: '{{ cortex_analyzers_repos }}'
+  become: yes
+  with_items: '{{ cortex_analyzers }}'
+  loop_control:
+    label: '{{ item.repo }}'
   tags: analyzers
 
-- name: Clone Cortex Analyzer & Responder repos
-  git:
-    repo: '{{ item }}'
-    dest: '/opt/{{ item | basename | replace(".git", "") }}'
-    update: yes
-  with_items: '{{ cortex_analyzers_repos }}'
-  tags: analyzers
-
-- name: Building list of Analyzer & Responder requirements
+- name: Build list of Analyzer & Responder pip requirements
   find:
-    paths: '/opt/{{ item | basename | replace(".git", "") }}'
+    paths: '/opt/{{ item.repo | basename | replace(".git", "") }}'
     patterns: requirements.txt
     file_type: file
     recurse: yes
-  with_items: '{{ cortex_analyzers_repos }}'
+  with_items: '{{ cortex_analyzers }}'
+  loop_control:
+    label: '{{ item.repo | basename | replace(".git", "") }}'
   register: pip_requirements
-  tags: [analyzers, pip]
+  tags:
+    - analyzers
+    - pip
 
 # This will likely fail for some packages - these can be safely ignored
-- name: Install required Analyzer & Responder Python2 dependencies
+- name: Install required Python2 pip dependencies
   pip:
     requirements: '{{ item }}'
     executable: '{{ pip2_exec }}'
     extra_args: --ignore-installed
     umask: '0022'
+  become: yes
   with_items: '{{ pip_requirements.results | map(attribute="files") | sum(start=[]) | map(attribute="path") | list }}'
-  ignore_errors: yes  # Ignore pip failures
-  tags: [analyzers, pip]
+  ignore_errors: yes
+  tags:
+    - analyzers
+    - pip
+    - pip2
 
 # This might fail for some packages - these can be safely ignored
-- name: Install required Analyzer & Responder Python3 dependencies
+- name: Install required Python3 pip dependencies
   pip:
     requirements: '{{ item }}'
     executable: '{{ pip3_exec }}'
     extra_args: --ignore-installed
     umask: '0022'
+  become: yes
   with_items: '{{ pip_requirements.results | map(attribute="files") | sum(start=[]) | map(attribute="path") | list }}'
-  ignore_errors: yes  # Ignore pip failures
-  tags: [analyzers, pip]
+  ignore_errors: yes
+  tags:
+    - analyzers
+    - pip
+    - pip3

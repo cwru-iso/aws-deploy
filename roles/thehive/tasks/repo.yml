@@ -1,0 +1,54 @@
+---
+- name: Install TheHive GPG keys
+  rpm_key:
+    key: https://raw.githubusercontent.com/TheHive-Project/TheHive/master/PGP-PUBLIC-KEY
+    fingerprint: 0CD5 AC59 DE5C 5A8E 0EE1 3849 3D99 BB18 562C BC1C
+    state: present
+  become: yes
+  register: yum_key
+  tags:
+    - repo
+    - gpg
+
+- name: Install TheHive repository
+  yum:
+    name: '{{ thehive_release_pkg }}'
+    state: present
+  become: yes
+  tags: repo
+
+- name: Update yum cache and import new keys
+  shell:
+    cmd: yum -q makecache -y
+    warn: no
+  become: yes
+  when: yum_key.changed
+  tags:
+    - repo
+    - gpg
+
+- name: Check if Amazon Linux Java repository is enabled
+  shell:
+    cmd: yum repolist enabled | grep -q amzn2extra-java-openjdk11
+    warn: no
+  changed_when: no
+  register: yum_repolist
+  failed_when: yum_repolist.rc == 2
+  tags: repo
+
+# This will NOT install the packages, but allow them to be installed via yum later
+- name: Enable Amazon Linux Java repository
+  command: amazon-linux-extras enable java-openjdk11
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo
+
+# This is not supported in the yum module
+# https://github.com/ansible/ansible/pull/31450#issuecomment-352889579
+- name: Clean and Update yum cache
+  shell:
+    cmd: yum clean all && yum check-update
+    warn: no
+  become: yes
+  when: yum_repolist.rc != 0
+  tags: repo

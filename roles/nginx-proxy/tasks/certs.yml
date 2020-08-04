@@ -1,5 +1,5 @@
 ---
-- name: Create nginx-proxy certs directory
+- name: Ensure nginx certs directory exists
   file:
     path: '{{ proxy_container_path }}/certs'
     state: directory
@@ -7,28 +7,25 @@
     owner: root
     group: root
     mode: '0755'
+  become: yes
   tags: certs
 
-- name: Check if local certificate is provided
-  local_action: stat path='{{ role_name }}/{{ ssl_cert_domain }}.key'
-  become: no
-  register: local_cert
-  tags: certs
-
-- name: Copy nginx-proxy cert
+- name: Copy nginx certificate
   copy:
     src: '{{ role_name }}/{{ ssl_cert_domain }}.crt'
     dest: '{{ proxy_container_path }}/certs/'
     mode: '0644'
+  become: yes
   tags: certs
 
 # Funky way of including an OPTIONAL file and registering it for later use
 # If the file isn't copied then the sites will NOT have OCSP Stapling
-- name: Copy nginx-proxy (optional) cert chains
+- name: Copy (optional) nginx certificate chains
   copy:
     src: '{{ item }}'
     dest: '{{ proxy_container_path }}/certs/'
     mode: '0644'
+  become: yes
   with_first_found:
     - files:
         - '{{ role_name }}/{{ ssl_cert_domain }}.chain.crt'
@@ -36,18 +33,21 @@
   register: ssl_ocsp_stapling
   tags: certs
 
-- name: Copy nginx-proxy cert private keys
+- name: Copy nginx certificate keys
   copy:
     src: '{{ role_name }}/{{ ssl_cert_domain }}.key'
     dest: '{{ proxy_container_path }}/certs/'
     mode: '0600'
+  become: yes
   tags: certs
 
 - name: Generate Diffie-Hellman parameters (only for intermediate/old sites)
   openssl_dhparam:
     path: '{{ proxy_container_path }}/certs/dhparam.pem'
     size: '{{ dhparam_size }}'
-  tags: [certs, dhparam]
+  become: yes
   when: ssl_config_type != "modern"
-      
+  tags:
+    - certs
+    - dhparam
     

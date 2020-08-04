@@ -1,0 +1,6 @@
+---
+cortex_release_pkg: https://dl.bintray.com/thehive-project/rpm-stable/thehive-project-release-1.1.0-2.noarch.rpm
+
+# Python pip locations
+pip2_exec: /usr/bin/pip2
+pip3_exec: /usr/bin/pip3

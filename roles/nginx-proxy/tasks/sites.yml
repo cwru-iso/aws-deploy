@@ -1,5 +1,5 @@
 ---
-- name: Create nginx-proxy sites directory
+- name: Ensure nginx sites directory exists
   file:
     path: '{{ proxy_container_path }}/sites'
     state: directory
@@ -7,15 +7,17 @@
     owner: root
     group: root
     mode: '0755'
+  become: yes
   tags: sites
 
-- name: Copy nginx site configuration
+- name: Create nginx site configuration
   template:
     src: '{{ ssl_config_type }}.conf.j2'
-    dest: '{{ proxy_container_path }}/sites/{{ ssl_cert_domain }}.conf'
+    dest: '{{ proxy_container_path }}/sites/application.conf'
     owner: root
     group: root
     mode: '0644'
+  become: yes
   tags: sites
       
     

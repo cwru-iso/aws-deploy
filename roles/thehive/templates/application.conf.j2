@@ -16,6 +16,8 @@ search {
   index = {{ elasticsearch_index_name }}
   # Address of the ElasticSearch instance
   uri = "{{ elasticsearch_uris | join(" ") }}"
+  # Enable SSL to connect to ElasticSearch
+  ssl.enabled = {{ elasticsearch_ssl }}
   # Scroll keepalive
   keepalive = 1m
   # Size of the page for scroll
@@ -29,6 +31,10 @@ search {
     # Maximum number of nested fields
     mapping.nested_fields.limit = 100
   }
+
+  ## Authentication configuration
+  search.username = "{{ elasticsearch_username }}"
+  search.password = "{{ elasticsearch_password }}"
 }
 
 auth.provider = ["local"]
@@ -48,7 +54,7 @@ play.http.parser.maxDiskBuffer = 1G
 # Cortex
 play.modules.enabled += connectors.cortex.CortexConnector
 cortex {
-{% for cortex in thehive_cortex %}
+{% for cortex in thehive_cortex_instances %}
   "{{ cortex.name }}" {
     url = "{{ cortex.url }}"
     key = "{{ cortex.key }}"
